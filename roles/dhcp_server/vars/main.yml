@@ -1,0 +1,13 @@
+---
+dhcp_server_interface: "enp0s8"
+# DHCP
+dhcp_server_subnet: "192.168.32.0"
+dhcp_server_netmask: "255.255.255.0"
+dhcp_server_range_start: "192.168.32.111"
+dhcp_server_range_end: "192.168.32.222"
+dhcp_server_gateway: "192.168.32.254"
+dhcp_server_default_lease_time: 3600
+dhcp_server_max_lease_time: 21600
+# Static (NASA Agent)
+dhcp_server_agent_mac_address: "08:00:27:BD:58:4B"
+dhcp_server_agent_ip_address: "192.168.32.234"

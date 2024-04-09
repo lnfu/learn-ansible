@@ -1,0 +1,12 @@
+---
+- name: Play with Ansible
+  hosts: all
+  tasks:
+    - name: Show Network Interfaces
+      ansible.builtin.command: ip addr
+      register: output
+      changed_when: output.rc == 0
+
+    - name: Show stdout
+      ansible.builtin.debug:
+        msg: "{{ output.stdout_lines }}"

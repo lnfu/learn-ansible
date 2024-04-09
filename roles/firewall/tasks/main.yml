@@ -1,0 +1,97 @@
+---
+# ref: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/iptables_module.html
+- name: Iptables flush filter
+  ansible.builtin.iptables:
+    chain: "{{ item }}"
+    flush: true
+  with_items: ["INPUT", "FORWARD", "OUTPUT"]
+
+# - name: Reject [Internet, VPN] to [Private]
+#   ansible.builtin.iptables:
+#     chain: FORWARD
+#     source: "!192.168.32.0/24"
+#     destination: "192.168.32.0/24"
+#     jump: REJECT
+
+# - name: Reject [Private] to [VPN]
+#   ansible.builtin.iptables:
+#     chain: FORWARD
+#     source: "192.168.32.0/24"
+#     destination: "10.113.0.0/16"
+#     jump: REJECT
+
+- name: Accept SSH from [ANY] to agent (192.168.32.234) - DST
+  ansible.builtin.iptables:
+    chain: FORWARD
+    action: insert
+    protocol: tcp
+    destination: "192.168.32.234"
+    destination_port: "22"
+    jump: ACCEPT
+
+- name: Accept SSH from [ANY] to agent (192.168.32.234) - SRC
+  ansible.builtin.iptables:
+    chain: FORWARD
+    action: insert
+    protocol: tcp
+    source: "192.168.32.234"
+    source_port: "22"
+    jump: ACCEPT
+
+- name: Reject SSH from [VPN] to router
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: tcp
+    source: "10.113.0.0/16"
+    destination_port: "22"
+    jump: REJECT
+
+- name: Accept ICMP from [ANY] to [ANY]
+  ansible.builtin.iptables:
+    chain: FORWARD
+    action: insert
+    protocol: icmp
+    jump: ACCEPT
+
+# TODO 可能之後要支援 udp 80/443 (HTTP/3)
+- name: Accept Web (80, 443) from [Private] to [VPN] - DST
+  ansible.builtin.iptables:
+    chain: FORWARD
+    action: insert
+    protocol: tcp
+    source: "192.168.32.0/24"
+    destination: "10.113.0.0/16"
+    destination_ports:
+      - "80"
+      - "443"
+    jump: ACCEPT
+
+- name: Accept Web (80) from [Private] to [VPN] - SRC
+  ansible.builtin.iptables:
+    chain: FORWARD
+    action: insert
+    protocol: tcp
+    source: "10.113.0.0/16"
+    source_port: 80
+    destination: "192.168.32.0/24"
+    jump: ACCEPT
+
+- name: Accept Web (443) from [Private] to [VPN] - SRC
+  ansible.builtin.iptables:
+    chain: FORWARD
+    action: insert
+    protocol: tcp
+    source: "10.113.0.0/16"
+    source_port: 443
+    destination: "192.168.32.0/24"
+    jump: ACCEPT
+
+- name: SNAT
+  ansible.builtin.iptables:
+    table: nat
+    chain: POSTROUTING
+    source: "192.168.32.0/24"
+    destination: "!10.113.0.0/16"
+    out_interface: enp0s3
+    jump: MASQUERADE
+    comment: NAT (private network to Internet)

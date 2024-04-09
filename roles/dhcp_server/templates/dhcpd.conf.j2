@@ -1,0 +1,11 @@
+subnet {{ dhcp_server_subnet }} netmask {{ dhcp_server_netmask }} {
+    range {{ dhcp_server_range_start }} {{ dhcp_server_range_end }};
+    option routers {{ dhcp_server_gateway }};
+    default-lease-time {{ dhcp_server_default_lease_time }};
+    max-lease-time {{ dhcp_server_max_lease_time }};
+}
+host agent {
+    hardware ethernet {{ dhcp_server_agent_mac_address }};
+    fixed-address {{ dhcp_server_agent_ip_address }};
+    option routers {{ dhcp_server_gateway }};
+}

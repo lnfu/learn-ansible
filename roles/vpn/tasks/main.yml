@@ -1,0 +1,12 @@
+---
+- name: Copy wireguard configuration file
+  ansible.builtin.copy:
+    src: wg0.conf
+    dest: /etc/wireguard/
+    mode: "0644"
+
+- name: Enable and start wireguard interface
+  ansible.builtin.service:
+    name: 'wg-quick@wg0'
+    state: started
+    enabled: true

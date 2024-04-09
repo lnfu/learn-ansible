@@ -1,0 +1,14 @@
+---
+- name: "Install network-manager (nmcli), and other tools"
+  ansible.builtin.package:
+    name:
+      - python3
+      - python3-pip
+      - network-manager
+      - nftables
+      - curl
+      - isc-dhcp-server
+      - traceroute
+      - wireguard
+    state: present
+    update_cache: true

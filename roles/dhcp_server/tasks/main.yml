@@ -1,0 +1,14 @@
+---
+- name: Update isc-dhcp-server listening interface
+  ansible.builtin.template:
+    src: isc-dhcp-server.j2
+    dest: /etc/default/isc-dhcp-server
+    mode: preserve
+
+- name: Configure dhcpd (isc-dhcp-server)
+  ansible.builtin.template:
+    src: dhcpd.conf.j2
+    dest: /etc/dhcp/dhcpd.conf
+    mode: preserve
+  notify:
+    - Restart isc-dhcp-server

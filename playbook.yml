@@ -1,0 +1,9 @@
+---
+- name: "NASA HW1"
+  hosts: vbox_router
+  roles:
+    - { role: common, become: true }
+    - { role: router, become: true }
+    - { role: vpn, become: true }
+    - { role: dhcp_server, become: true }
+    - { role: firewall, become: true }
